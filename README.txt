@@ -3,7 +3,7 @@ Contributors: bandido, olegkovalyov
 Tags: woocommerce, justin, ecommerce
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.4.11.2
+Stable tag: 1.4.11.3
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Збережіть налаштування.
 
 == Що нового? ==
+
+= 1.4.11.3 =
+* [fix] зроблені дрібні правки в UI/UX
 
 = 1.4.11.2 =
 * [new] додана можливість створювання накладних (beta)

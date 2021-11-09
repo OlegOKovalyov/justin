@@ -26,22 +26,22 @@
         </div>
     </div>
     <?php
-        $path = JUSTIN_PLUGFOLDER . '/public/partials/morkvajustin-plugin-invoices-page.php';
+        $path = JUSTIN_PLUGFOLDER . '/justin-pro.php';
         if ( ! file_exists( $path ) ) { ?>
             <div class="card">
                 <div class="card-header">
                     <h3>Pro версія</h3>
                 </div>
                 <div class="card-body">
-                    <p></p>
                     <ul>
-                        <li>1. Легке створення накладних.</li>
-                        <li>2. Відправка від імені ФОП.</li>
-                        <li>... та багато іншого</li>
+                        <li style="margin-bottom:0;">1. Наложений платіж.</li>
+                        <li style="margin-bottom:0;">2. Опис відправлення.</li>
+                        <li style="margin-bottom:0;">3. Розрахунок габаритів і маси.</li>
+                        <li style="margin-bottom:0;">4. Розрахунок вартості доставки.</li>
+                        <li style="margin-bottom:0;">5. Пріорітетна підтримка.</li>
                     </ul>
                     Оновіться до Pro-версії зараз!
-                    <p></p>
-                    <h5><a href="https://morkva.co.ua/shop-2/woocommerce-justin" target="_blank" class="button button-primary">Хочу Pro</a></h5>
+                    <h5><a href="https://morkva.co.ua/shop/woocommerce-justin" target="_blank" class="button button-primary">Хочу Pro</a></h5>
                 </div>
             </div>
 

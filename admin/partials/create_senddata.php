@@ -1,4 +1,9 @@
 <?php
+// Pay on delivery for FREE-version is FALSE (OFF)
+if ( ! file_exists( JUSTIN_PLUGFOLDER . '/justin-pro.php' ) ) {
+    $_POST['invoice_redelivery'] = "OFF";
+}
+
 // Create data array for invoice API JustIn query
 $senddata = array(
 

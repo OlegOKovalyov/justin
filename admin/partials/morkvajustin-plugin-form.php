@@ -324,17 +324,6 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         <p class="light">Якщо залишити порожнім, плагін використає вартість замовлення</p>
                      </th>
                   </tr>
-                  <tr>
-                     <th scope="row">
-                        <label for="invoice_redelivery">Наложений платіж</label>
-                     </th>
-                     <td>
-                        <select class="invoice_redelivery" name="invoice_redelivery">
-                          <option value="ON">є</option>
-                          <option value="OFF">немає</option>
-                        </select>
-                     </td>
-                  </tr>
                </tbody>
             </table>
             <table class="form-table full-width-input">
