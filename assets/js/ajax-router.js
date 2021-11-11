@@ -45,5 +45,16 @@
                 },
             });
         },
+        getWarehousesDB: function (s) {
+            o.ajax({
+                method: "POST",
+                url: woo_justin_globals.ajaxUrl,
+                data: { action: "woo_justin_get_warehousesDB", body: { ref: s.cityRef } },
+                dataType: "json",
+                success: function (o) {
+                    s.success(o);
+                },
+            });
+        },
     };
 })(jQuery);

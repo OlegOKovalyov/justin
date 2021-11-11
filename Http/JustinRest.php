@@ -11,13 +11,13 @@ use morkva\JustinShip\Validators\OptionsValidator;
 class JustinRest
 {
   private $api;
-  private $novaPoshtaRepository;
+  private $justinRepository;
   private $optionsRepository;
 
   public function __construct()
   {
     $this->api = new JustinApi();
-    $this->novaPoshtaRepository = new JustinRepository();
+    $this->justinRepository = new JustinRepository();
     $this->optionsRepository = new OptionsRepository();
 
     add_action('rest_api_init', [ $this, 'initRoutes' ]);
@@ -100,7 +100,7 @@ class JustinRest
   public function getAreas(\WP_REST_Request $request)
   {
     try {
-      $areas = $this->novaPoshtaRepository->getAreas();
+      $areas = $this->justinRepository->getAreas();
       $npAreaTranslator = new NPTranslator();
 
       return Response::make('success', $npAreaTranslator->translateAreas($areas));
@@ -113,7 +113,7 @@ class JustinRest
   public function getCities(\WP_REST_Request $request)
   {
     try {
-      $cities = $this->novaPoshtaRepository->getCities($request['ref']);
+      $cities = $this->justinRepository->getCities($request['ref']);
 
       return Response::make('success', $cities);
     }
@@ -125,7 +125,7 @@ class JustinRest
   public function getWarehouses(\WP_REST_Request $request)
   {
     try {
-      $warehouses = $this->novaPoshtaRepository->getWarehouses($request['ref']);
+      $warehouses = $this->justinRepository->getWarehouses($request['ref']);
 
       return Response::make('success', $warehouses);
     }
@@ -139,7 +139,7 @@ class JustinRest
     $result = $this->api->getAreas();
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveAreas($result['data']);
+      $this->justinRepository->saveAreas($result['data']);
 
       return Response::make('success');
     }
@@ -154,7 +154,7 @@ class JustinRest
     $result = $this->api->getCities((int)$_POST['page']);
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveCities($result['data'], (int)$_POST['page']);
+      $this->justinRepository->saveCities($result['data'], (int)$_POST['page']);
 
       return Response::make('success', [
         'loaded' => count($result['data']) === 0
@@ -171,7 +171,7 @@ class JustinRest
     $result = $this->api->getWarehouses((int)$_POST['page']);
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveWarehouses($result['data'], (int)$_POST['page']);
+      $this->justinRepository->saveWarehouses($result['data'], (int)$_POST['page']);
 
       return Response::make('success', [
         'loaded' => count($result['data']) === 0

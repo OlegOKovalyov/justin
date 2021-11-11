@@ -155,17 +155,6 @@ class JustinFrontendInjector
 
       // Get russian city names from API JustIn
       if ( 'ru_RU' == get_user_locale() ) {
-          // $apiCitiesJson = $this->justinApiNew->getCity( 'RU' ); // Get city names from API Justin
-          // $apiCitiesObj = \json_decode( $apiCitiesJson, true );
-          // $apiCities = json_decode($apiCitiesJson, true );
-          // $cities = isset( $apiCities['data'] ) ? $apiCities['data'] : false;
-          //
-          // if ( ! $cities ) {
-          //     wc_add_notice( '<b>Помилка API Justin (Cities):</b><i> Не можливо отримати дані про населені пункти.</i>', 'error' );
-          // }
-          // if ( null !== $apiCities['response']['message'] && ! empty( $apiCities['response']['message'] ) && 'ОК' != $apiCities['response']['message'] ) {
-          //     wc_add_notice( '<b>Помилка API Justin (Cities):</b><i> ' . $apiCities['response']['message'] . '</i>', 'error' );
-          // }
           $city_table_name = $wpdb->prefix . 'woo_justin_ru_cities';
           $cities = $wpdb->get_results("SELECT * FROM {$city_table_name} ORDER BY descr ASC", ARRAY_A);
 
@@ -183,7 +172,6 @@ class JustinFrontendInjector
 
   private function getWarehouseSelectAttributes($placeholder)
   {
-
     $options = array( '' => '' );
 
     return [

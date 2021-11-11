@@ -11,13 +11,13 @@ use morkva\JustinShip\Validators\OptionsValidator;
 class JustinAjax
 {
   private $api;
-  private $novaPoshtaRepository;
+  private $justinRepository;
   private $optionsRepository;
 
   public function __construct()
   {
     $this->api = new JustinApi();
-    $this->novaPoshtaRepository = new JustinRepository();
+    $this->justinRepository = new JustinRepository();
     $this->optionsRepository = new OptionsRepository();
 
     if (wp_doing_ajax()) {
@@ -50,6 +50,10 @@ class JustinAjax
     // Frontend Warehouses
     add_action('wp_ajax_woo_justin_get_warehouses', [ $this, 'getWarehouses' ]);
     add_action('wp_ajax_nopriv_woo_justin_get_warehouses', [ $this, 'getWarehouses' ]);
+
+    // Frontend Warehouses from DB
+    add_action('wp_ajax_woo_justin_get_warehousesDB', [ $this, 'getWarehousesDB' ]);
+    add_action('wp_ajax_nopriv_woo_justin_get_warehousesDB', [ $this, 'getWarehousesDB' ]);
   }
 
   public function saveSettings()
@@ -76,7 +80,7 @@ class JustinAjax
   public function getAreas()
   {
     try {
-      $areas = $this->novaPoshtaRepository->getAreas();
+      $areas = $this->justinRepository->getAreas();
       $npAreaTranslator = new NPTranslator();
 
       Response::makeAjax('success', $npAreaTranslator->translateAreas($areas));
@@ -89,7 +93,7 @@ class JustinAjax
   public function getCities()
   {
     try {
-      $cities = $this->novaPoshtaRepository->getCities($_POST['body']['ref']);
+      $cities = $this->justinRepository->getCities($_POST['body']['ref']);
 
       Response::makeAjax('success', $cities);
     }
@@ -101,8 +105,18 @@ class JustinAjax
   public function getWarehouses()
   {
     try {
-      $warehouses = $this->novaPoshtaRepository->getWarehouses($_POST['body']['ref']);
+      $warehouses = $this->justinRepository->getWarehouses($_POST['body']['ref']);
+      Response::makeAjax('success', $warehouses);
+    }
+    catch (\Error $e) {
+      Response::makeAjax('error', $e->getMessage());
+    }
+  }
 
+  public function getWarehousesDB()
+  {
+    try {
+      $warehouses = $this->justinRepository->getWarehousesDB($_POST['body']['ref']);
       Response::makeAjax('success', $warehouses);
     }
     catch (\Error $e) {
@@ -115,7 +129,7 @@ class JustinAjax
     $result = $this->api->getAreas();
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveAreas($result['data']);
+      $this->justinRepository->saveAreas($result['data']);
 
       Response::makeAjax('success');
     }
@@ -130,7 +144,7 @@ class JustinAjax
     $result = $this->api->getCities((int)$_POST['body']['page']);
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveCities($result['data'], (int)$_POST['body']['page']);
+      $this->justinRepository->saveCities($result['data'], (int)$_POST['body']['page']);
 
       Response::makeAjax('success', [
         'loaded' => count($result['data']) === 0
@@ -147,7 +161,7 @@ class JustinAjax
     $result = $this->api->getWarehouses((int)$_POST['body']['page']);
 
     if ($result['success']) {
-      $this->novaPoshtaRepository->saveWarehouses($result['data'], (int)$_POST['body']['page']);
+      $this->justinRepository->saveWarehouses($result['data'], (int)$_POST['body']['page']);
 
       Response::makeAjax('success', [
         'loaded' => count($result['data']) === 0

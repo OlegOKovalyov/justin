@@ -36,8 +36,9 @@
             e("#justin_shipping_method_city").on("change", function () {
                 let i = e("#justin_shipping_method_warehouse"),
                     n = e("#justin_shipping_method_city").val();
+                e('#justin_shipping_method_warehouse option:gt(0)').remove();
                 s(),
-                    JustinShipRouter.getWarehouses({
+                    JustinShipRouter.getWarehousesDB({
                         cityRef: n,
                         success: function (s) {
                             t();
@@ -45,14 +46,11 @@
                                 let t = s.data;
                                 for (let s = 0; s < t.length; s++) {
                                     let o = t[s];
-                                    // console.log(o),
-                                        o.locality == n
-                                            ? i.append(
-                                                  e("<option></option>")
-                                                      .attr("value", o.description)
-                                                      .text(o.description + " (" + o.adress + " )")
-                                              ) : '';
-                                            // : console.log(o.locality, n);
+                                    i.append(
+                                        e("<option></option>")
+                                            .attr("value", o.description)
+                                            .text(o.description + " (" + o.adress + " )")
+                                    );
                                 }
                             } catch (e) {
                                 console.log(e + "Не вдалось знайти " + s);

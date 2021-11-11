@@ -45,6 +45,7 @@ class Activator
       CREATE TABLE IF NOT EXISTS `{$base_prefix}woo_justin_ua_warehouses` (
         uuid VARCHAR(36) NOT NULL,
         descr VARCHAR(255) NOT NULL,
+        address VARCHAR(255) NOT NULL,
         city_uuid VARCHAR(36),
         branch VARCHAR(18),
         updated_at INT(10) UNSIGNED NOT NULL,
@@ -56,6 +57,7 @@ class Activator
       CREATE TABLE IF NOT EXISTS `{$base_prefix}woo_justin_ru_warehouses` (
         uuid VARCHAR(36) NOT NULL,
         descr VARCHAR(255) NOT NULL,
+        address VARCHAR(255) NOT NULL,
         city_uuid VARCHAR(36),
         branch VARCHAR(18),
         updated_at INT(10) UNSIGNED NOT NULL,
@@ -116,20 +118,22 @@ class Activator
     foreach ($warehousesObj->data as $warehouse) {
         if ($warehouse->fields->Depart->uuid) {
             $insert[] = $wpdb->prepare(
-                "('%s', '%s', '%s', '%s', %d)",
+                "('%s', '%s', '%s', '%s', '%s', %d)",
                 $warehouse->fields->Depart->uuid,
                 $warehouse->fields->descr,
+                $warehouse->fields->address,
                 $warehouse->fields->city->uuid,
                 $warehouse->fields->branch,
                 $updatedAt
             );
         }
     }
-    $queryInsert = "INSERT INTO $table (`uuid`, `descr`, `city_uuid`, `branch`, `updated_at`) VALUES ";
+    $queryInsert = "INSERT INTO $table (`uuid`, `descr`, `address`, `city_uuid`, `branch`, `updated_at`) VALUES ";
     $queryInsert .= implode(",", $insert);
     $queryInsert .= ' ON DUPLICATE KEY UPDATE
         `uuid` = VALUES(`uuid`),
         `descr` = VALUES(`descr`),
+        `address` = VALUES(`address`),
         `city_uuid`= VALUES(`city_uuid`),
         `branch`= VALUES(`branch`),
         `updated_at` = VALUES(`updated_at`)';

@@ -935,7 +935,7 @@ class MJS_Plugin_Loader
         }
         if ( ! empty( $meta_ttn ) ) {
             echo '<div style="margin-top:10px;">Номер відправлення: ' . $meta_ttn . '</div>';
-
+            
             // Create 'Друк стікера' button in meta-box 'justin_newttn' to print JustIn invoice sticker
             echo '<p><a  class="mrkvjs_stickerprint button" alert="У новій вкладці відкриється документ для друку"
                 target="_blank" href="https://api.justin.ua/justin_pms/hs/api/v1/printSticker/order?order_number=' .

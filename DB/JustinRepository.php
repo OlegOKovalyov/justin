@@ -65,6 +65,33 @@ class JustinRepository
   	return $arr_result['result'];
   }
 
+  public function getWarehousesDB($cityRef) // Get ukrainian warehouses data from DB
+  {
+        global $wpdb;
+        $warehouses = array();
+        $arr_result = array();
+        if ( 'uk' == get_user_locale() ) {
+            $city_table_name = $wpdb->prefix . 'woo_justin_ua_cities';
+            $warehouse_table_name = $wpdb->prefix . 'woo_justin_ua_warehouses';
+        }
+        if ( 'ru_RU' == get_user_locale() ) {
+            $city_table_name = $wpdb->prefix . 'woo_justin_ru_cities';
+            $warehouse_table_name = $wpdb->prefix . 'woo_justin_ru_warehouses';
+        }
+        // Get chosen city uuid
+        $city = $wpdb->get_results( "SELECT * FROM {$city_table_name} WHERE descr LIKE '{$cityRef}'", ARRAY_A );
+        $city_uuid = $city[0]['uuid'];
+        // Get all warehouses of the city
+        $warehouses = $wpdb->get_results( "SELECT * FROM {$warehouse_table_name} WHERE city_uuid LIKE '{$city_uuid}' ORDER BY descr ASC", ARRAY_A );
+        foreach ( $warehouses as $key => $value) {
+          $arr_result['result'][] = array(
+              "adress" 		=> $value['address'],
+              "description" => $value['descr']
+          );
+        }
+        return $arr_result['result'] ?? false;
+  }
+
   public function saveAreas($areas)
   {
     // global $wpdb;
