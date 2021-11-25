@@ -29,6 +29,7 @@ class JustinApi
         $KyivTimeZone = new \DateTimeZone('Europe/Kiev');
         $current_time = wp_date( "Y-m-d", time(), $KyivTimeZone );
         $this->sign = (string)sha1( $this->password.':'. $current_time );
+
         $this->apikey = get_option('morkvajustin_apikey');
         // $this->apikey = 'f2290c07-c028-11e9-80d2-525400fb7782';
     }
@@ -153,6 +154,7 @@ class JustinApi
                 'timeout'     => 25
             )
         );
+
         return $remote_post['body'];
     }
 

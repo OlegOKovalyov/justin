@@ -16,6 +16,8 @@ $sender_warehouse_uuid = $_POST['woocommerce_morkvajustin_shipping_method_wareho
 $city_table_name = $wpdb->prefix . 'woo_justin_' . strtolower( $countryCode ) . '_cities';
 $warehouse_table_name = $wpdb->prefix . 'woo_justin_' . strtolower( $countryCode ) . '_warehouses';
 $sender_warehouse_branch_arr = $wpdb->get_col( "SELECT branch FROM {$warehouse_table_name} WHERE uuid = '{$sender_warehouse_uuid}'" );
+$phone_bad_symbols = array( '+', '-', '(', ')', ' ' );
+$sender_phone = str_replace( $phone_bad_symbols, '', get_option( 'justin_phone' ) );
 
 $justinapi = new JustinApi();
 
@@ -91,6 +93,7 @@ $recipient_city_uuid_arr = $wpdb->get_col( "SELECT uuid FROM {$city_table_name} 
 $recipient_warehouse_name = $order_data['billing']['address_1'];
 $recipient_warehouse_uuid_arr = $wpdb->get_col( "SELECT uuid FROM {$warehouse_table_name} WHERE descr = '{$recipient_warehouse_name}'" );
 $recipient_warehouse_branch_arr = $wpdb->get_col( "SELECT branch FROM {$warehouse_table_name} WHERE uuid = '{$recipient_warehouse_uuid_arr[0]}'" );
+$recipient_phone = str_replace( $phone_bad_symbols, '', $order_data['billing']['phone'] ) ?? '';
 
 // After 'Створити' button clicked
 if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
@@ -116,28 +119,48 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
     // Create Justin invoice for current order in API Justin
     $justinApiTtnObj = $justinapi->createTtn( get_option( 'morkvajustin_apikey' ), $senddata );
     $justinApiTtn = json_decode( $justinApiTtnObj );
-    $order_invoice_number = $justinApiTtn->data->number;
-    $order_invoice_ref = $justinApiTtn->data->ttn;
 
-    // Add data to $invoice_db_data array from API JustIn response
-    $invoice_db_data['order_invoice'] = $order_invoice_number;
-    $invoice_db_data['invoice_ref'] = $order_invoice_ref;
+   if ( 'success' == $justinApiTtn->result ) {
 
-    // Insert invoice data row in DB invoice table
-    $invoice_table_name = $wpdb->prefix . 'justin_ttn_invoices';
-    $wpdb->insert( $invoice_table_name, $invoice_db_data, ['%d', '%d', '%s'] );
+       $order_invoice_number = $justinApiTtn->data->number;
+       $order_invoice_ref = $justinApiTtn->data->ttn;
 
-    // Create custom field 'justin_ttn' for 'Редагувати замовлення' page
-    $order = wc_get_order( $order_data["id"] );
-    $meta_invoice_number_key = 'justin_ttn';
-    $meta_invoice_number_value = $justinApiTtn->data->number;
-    update_post_meta ($order_id, $meta_invoice_number_key, $meta_invoice_number_value );
+       // Add data to $invoice_db_data array from API JustIn response
+       $invoice_db_data['order_invoice'] = $order_invoice_number;
+       $invoice_db_data['invoice_ref'] = $order_invoice_ref;
 
-    // Set message in sidebar 'Замовлення Приміток' on 'Редагувати замовлення' page
-    $note = "Відправлення JustIn: " . $meta_invoice_number_value .".";
-    $order->add_order_note($note);
-    $order->save();
-    $api_justin_invoice_query = true;
+       // Insert invoice data row in DB invoice table
+       $invoice_table_name = $wpdb->prefix . 'justin_ttn_invoices';
+       $wpdb->insert( $invoice_table_name, $invoice_db_data, ['%d', '%d', '%s'] );
+
+       // Create custom field 'justin_ttn' for 'Редагувати замовлення' page
+       $order = wc_get_order( $order_data["id"] );
+       $meta_invoice_number_key = 'justin_ttn';
+       $meta_invoice_number_value = $justinApiTtn->data->number;
+       update_post_meta ($order_id, $meta_invoice_number_key, $meta_invoice_number_value );
+
+       // Set message in sidebar 'Замовлення Приміток' on 'Редагувати замовлення' page
+       $note = "Відправлення JustIn: " . $meta_invoice_number_value .".";
+       $order->add_order_note($note);
+       $order->save();
+       $api_justin_invoice_query = true;
+
+   } elseif ( 'error' == $justinApiTtn->result ) {
+
+       $api_justin_invoice_query = false;
+       $justinApiTtnError = is_object( $justinApiTtn->errors[0] ) ? $justinApiTtn->errors[0]->error : $justinApiTtn->errors[0];
+       if ( 'Sender city ID not correct' == $justinApiTtnError ) {
+           $justinApiTtnError .= '. Спробуйте перевизначити місто і відділення Відправника в налаштуваннях плагіну';
+       }
+       echo '<div id="mrkvjs_err_msg" style="margin-left:0;margin-right: 0;height:95px;padding:8px;border-left:4px solid #ce4a36;margin-top:20px;width:65%;background:#fff;">
+               <div id="messagebox-err" style="border-left-color:#ce4a36;">
+                     <h3 style="margin-left: 10px;">Відправлення не створене.</h3>
+                     <p style="margin-left: 10px;">
+                        <span style="color:#ce4a36;">Помилка від API Justin: ' . $justinApiTtnError .  '.</span><br>
+                     </p>
+               </div>
+            </div>';
+   }
 }
 ?>
 
@@ -147,7 +170,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
    <div class="container">
       <form class="form-invoice form-invoice-3cols"  method="post" name="invoice">
          <?php  if ( $api_justin_invoice_query ) { ?>
-             <div id="messagebox" class="messagebox_show updated" data="155" style="height:0;padding:0">
+             <div id="messagebox" class="messagebox_show updated" data="165" style="height:0;padding:0">
                  <div class="sucsess-naklandna">
                     <h3>Відправлення <?php echo $meta_invoice_number_value; ?> успішно створене!</h3>
 					<p>
@@ -156,7 +179,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         Адреса відправлення: <?php echo $sender_warehouse_name . ', ' . $sender_city_name; ?><br>
                         Одержувач: <?php echo $senddata['receiver']; ?></br>
                         Адреса отримання: <?php echo $recipient_warehouse_name . ', ' . $recipient_city_name; ?><br>
-
+                        <span style="color:#ce4a36;font-weight:600;">Перевірте правильність створеної накладної в особистому кабінеті!</span>
 					</p>
 				</div>
              </div>
@@ -193,7 +216,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         <label for="sender_phone">Телефон</label>
                      </th>
                      <td>
-                        <input type="text" id="sender_phone" name="invoice_sender_phone" class="input sender_phone" value="<?php echo get_option('justin_phone'); ?>">
+                        <input type="text" id="sender_phone" name="invoice_sender_phone" class="input sender_phone" value="<?php echo sanitize_text_field( $sender_phone ); ?>">
                      </td>
                   </tr>
                   <tr>
@@ -246,7 +269,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         <label for="recipient_phone">Телефон</label>
                      </th>
                      <td>
-                        <input type="text" name="invoice_recipient_phone" class="input recipient_phone" id="recipient_phone" value="<?php echo $order_data['billing']['phone']; ?>">
+                        <input type="text" name="invoice_recipient_phone" class="input recipient_phone" id="recipient_phone" value="<?php echo sanitize_text_field( $recipient_phone ); ?>">
                      </td>
                   </tr>
                </tbody>
@@ -316,7 +339,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         <label for="invoice_priceid">Оголошена вартість</label>
                      </th>
                      <td>
-                        <input id="invoice_priceid" type="text" name="invoice_price" required="" value="42.00">
+                        <input id="invoice_priceid" type="text" name="invoice_price" required="" value="<?php echo $order_data['total']; ?>">
                      </td>
                   </tr>
                   <tr>

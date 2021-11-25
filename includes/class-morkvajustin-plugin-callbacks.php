@@ -69,7 +69,7 @@ class MJS_Plugin_Callbacks
         if (get_option('woocommerce_morkvajustin_shipping_method_city')) {
             $cityid = get_option('woocommerce_morkvajustin_shipping_method_city');
         }
-        // $cityid = ( ! empty( $cityid ) ) ?? '';
+        $cityid = ( ! empty( $cityid ) ) ?? '';
         echo '<input class="input-text regular-input" type="hidden" name="woocommerce_morkvajustin_shipping_method_city" id="woocommerce_morkvajustin_shipping_method_city" style="" value="' . $cityid . '" placeholder="">';
     }
 
@@ -116,7 +116,7 @@ class MJS_Plugin_Callbacks
         if (get_option('woocommerce_morkvajustin_shipping_method_warehouse')) {
             $warehouseid = get_option('woocommerce_morkvajustin_shipping_method_warehouse');
         }
-        // $warehoseid = ( ! empty( $warehouseid ) ) ?? '';
+        $warehoseid = ( ! empty( $warehouseid ) ) ?? '';
         echo '<input class="input-text regular-input jjs-hide-justin-option" type="hidden" name="woocommerce_morkvajustin_shipping_method_warehouse" id="woocommerce_morkvajustin_shipping_method_warehouse" style="" value="' . $warehouseid . '" placeholder="">';
     }
 

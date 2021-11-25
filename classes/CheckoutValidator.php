@@ -17,13 +17,14 @@ class CheckoutValidator
 
   public function removeDefaultFieldsFromValidation($fields)
   {
-    if ($this->maybeDisableDefaultFields()) {
+    // if ( ! $this->maybeDisableDefaultFields() ) {
+      unset($fields['billing']['billing_company']);
       unset($fields['billing']['billing_address_1']);
       unset($fields['billing']['billing_address_2']);
       unset($fields['billing']['billing_city']);
       unset($fields['billing']['billing_state']);
       unset($fields['billing']['billing_postcode']);
-    }
+    // }
 
     return $fields;
   }
@@ -64,10 +65,10 @@ class CheckoutValidator
   	return $data;
   }
 
-  private function maybeDisableDefaultFields()
-  {
-    return isset($_POST['shipping_method']) &&
-      preg_match('/^' . JUSTIN_METHOD_NAME . '.*/i', $_POST['shipping_method'][0]) &&
-      apply_filters('woo_justin_prevent_disable_default_fields', false) === false;
-  }
+  // private function maybeDisableDefaultFields()
+  // {
+  //   return isset($_POST['shipping_method']) &&
+  //     preg_match('/^' . JUSTIN_METHOD_NAME . '.*/i', $_POST['shipping_method'][0]) &&
+  //     apply_filters('woo_justin_prevent_disable_default_fields', false) === false;
+  // }
 }

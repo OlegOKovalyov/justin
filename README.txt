@@ -3,7 +3,7 @@ Contributors: bandido, olegkovalyov
 Tags: woocommerce, justin, ecommerce
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.5
+Stable tag: 1.5.2
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,12 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Збережіть налаштування.
 
 == Що нового? ==
+
+= 1.5.2 =
+* [fix] виправлено сповіщення про помилки з API Justin
+* [fix] прибрані зайві поля на сторінці Checkout
+* [fix] тепер в поле оголошена вартість передається загальна вартість замовлення
+* [fix] з поля Телефон видаляються зайві символи у вкладці Створити Накладну
 
 = 1.5 =
 * назви відділень отримуються з БД сайту, а не з API Justin
