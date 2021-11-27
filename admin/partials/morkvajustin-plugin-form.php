@@ -18,6 +18,7 @@ $warehouse_table_name = $wpdb->prefix . 'woo_justin_' . strtolower( $countryCode
 $sender_warehouse_branch_arr = $wpdb->get_col( "SELECT branch FROM {$warehouse_table_name} WHERE uuid = '{$sender_warehouse_uuid}'" );
 $phone_bad_symbols = array( '+', '-', '(', ')', ' ' );
 $sender_phone = str_replace( $phone_bad_symbols, '', get_option( 'justin_phone' ) );
+$justin_invoice_payer = get_option( 'justin_invoice_payer' ); // 0 - Одержувач, 1 - Відправник
 
 $justinapi = new JustinApi();
 
@@ -94,6 +95,7 @@ $recipient_warehouse_name = $order_data['billing']['address_1'];
 $recipient_warehouse_uuid_arr = $wpdb->get_col( "SELECT uuid FROM {$warehouse_table_name} WHERE descr = '{$recipient_warehouse_name}'" );
 $recipient_warehouse_branch_arr = $wpdb->get_col( "SELECT branch FROM {$warehouse_table_name} WHERE uuid = '{$recipient_warehouse_uuid_arr[0]}'" );
 $recipient_phone = str_replace( $phone_bad_symbols, '', $order_data['billing']['phone'] ) ?? '';
+$order_total_price = $order_data['total']; // Повна вартість замовлення
 
 // After 'Створити' button clicked
 if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
@@ -150,7 +152,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
        $api_justin_invoice_query = false;
        $justinApiTtnError = is_object( $justinApiTtn->errors[0] ) ? $justinApiTtn->errors[0]->error : $justinApiTtn->errors[0];
        if ( 'Sender city ID not correct' == $justinApiTtnError ) {
-           $justinApiTtnError .= '. Спробуйте перевизначити місто і відділення Відправника в налаштуваннях плагіну';
+           $justinApiTtnError .= '.<br>Спробуйте перевизначити місто і відділення Відправника в налаштуваннях плагіну';
        }
        echo '<div id="mrkvjs_err_msg" style="margin-left:0;margin-right: 0;height:95px;padding:8px;border-left:4px solid #ce4a36;margin-top:20px;width:65%;background:#fff;">
                <div id="messagebox-err" style="border-left-color:#ce4a36;">
@@ -293,14 +295,19 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                   </tr>
                   <tr>
                      <th scope="row">
-                        <label for="invoice_payer">Платник</label>
+                        <label for="invoice_payer">Платник послуг</label>
                      </th>
-                     <td>
+                    <td>
                         <select id="invoice_payer" name="invoice_payer">
-                           <option value="Recipient" selected="">Отримувач</option>
-                           <option value="Sender">Відправник</option>
+                           <?php if ( '0' === $justin_invoice_payer ) : ?>
+        		               <option value="Recipient" selected="">Отримувач</option>
+        		               <option value="Sender">Відправник</option>
+                           <?php elseif ( '1' === $justin_invoice_payer ) : ?>
+                               <option value="Sender" selected="">Відправник</option>
+                               <option value="Recipient">Отримувач</option>
+                           <?php endif; ?>
                         </select>
-                     </td>
+                    </td>
                   </tr>
                   <tr>
                      <th scope="row"><label class="light" for="invoice_cargo_mass">Вага, кг</label></th>
@@ -339,7 +346,7 @@ if ( ! empty( $_POST['mrkvjs_create_ttn'] ) ) {
                         <label for="invoice_priceid">Оголошена вартість</label>
                      </th>
                      <td>
-                        <input id="invoice_priceid" type="text" name="invoice_price" required="" value="<?php echo $order_data['total']; ?>">
+                        <input id="invoice_priceid" type="text" name="invoice_price" required="" value="<?php echo $order_total_price ?>">
                      </td>
                   </tr>
                   <tr>

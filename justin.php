@@ -3,7 +3,7 @@
  * Plugin Name: Justin for WooCommerce
  * Plugin URI: https://morkva.co.ua
  * Description: Плагін доставки Justin для WooCommerce
- * Version: 1.5.2
+ * Version: 1.5.4
  * Author: Morkva
  * Requires at least: 5.0
  * Requires PHP: 7.0

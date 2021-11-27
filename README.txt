@@ -3,7 +3,7 @@ Contributors: bandido, olegkovalyov
 Tags: woocommerce, justin, ecommerce
 Requires at least: 5.0
 Tested up to: 5.8
-Stable tag: 1.5.2
+Stable tag: 1.5.4
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Збережіть налаштування.
 
 == Що нового? ==
+
+= 1.5.4 =
+* [new] змінені назви та синхронізовані значення полів в Налаштування та Створити Накладну
 
 = 1.5.2 =
 * [fix] виправлено сповіщення про помилки з API Justin
