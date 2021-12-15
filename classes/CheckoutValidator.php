@@ -18,12 +18,12 @@ class CheckoutValidator
   public function removeDefaultFieldsFromValidation($fields)
   {
     // if ( ! $this->maybeDisableDefaultFields() ) {
-      unset($fields['billing']['billing_company']);
-      unset($fields['billing']['billing_address_1']);
-      unset($fields['billing']['billing_address_2']);
-      unset($fields['billing']['billing_city']);
-      unset($fields['billing']['billing_state']);
-      unset($fields['billing']['billing_postcode']);
+        unset($fields['billing']['billing_company']);
+        $fields['billing']['billing_address_1']['required'] = false;
+        $fields['billing']['billing_address_2']['required'] = false;
+        $fields['billing']['billing_city']['required'] = false;
+        unset($fields['billing']['billing_state']);
+        unset($fields['billing']['billing_postcode']);
     // }
 
     return $fields;
